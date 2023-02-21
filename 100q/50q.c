@@ -621,25 +621,27 @@ int triSup (int N, int m [N][N]) {
 }
 
 
+void transposta (int N, float m [N][N]) {
+    int i, j, aux;
+    for (i = 0; i<N; i++){
+        for(j = 0; j < i; j++){
+            aux = m[i][j];
+            m[i][j] = m[j][i];
+            m[j][i] = aux;
+        }
+    }
+
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void addTo(int N, int M, int a [N][M], int b[N][M]) {
+    int i,j;
+    for(i = 0; i < N; i++){
+        for(j = 0; j < M; j++){
+            a[i][j] += b[i][j];
+        }
+    }
+}
 
 
 int unionSet (int N, int v1[N], int v2[N], int r[N]){
@@ -688,9 +690,123 @@ int unionMSet (int N, int v1[N], int v2[N], int r[N]){
     }
 }
 
+int cardinalMSet (int N, int v[N]){
+    int i, r=0;
+    for (i = 0; i<N; i++){
+        r += v[i];
+    };
+    return r;
+}
 
+typedef enum movimento {Norte, Oeste, Sul, Este} Movimento;
 
+typedef struct posicao {
+    int x, y;
+} Posicao;
 
+Posicao posFinal (Posicao inicial, Movimento mov[], int N){
+    int i;
+    for(i=0; i<N; i++){
+        switch (mov[i])
+        {
+        case Norte:
+            inicial.y++;
+            break;
+        case Sul:
+            inicial.y--;
+            break;
+        case Oeste:
+            inicial.x--;
+            break;
+        case Este:
+            inicial.x++;
+            break;
+        default:
+            break;
+        }
+    }
+    return inicial;
+}
+
+int caminho (Posicao inicial, Posicao final, Movimento mov[], int N){
+    int i;
+    for(i=0; i<N; i++){
+        if (inicial.x>final.x){
+            mov[i]= Oeste;
+            inicial.x--;
+        }
+        else{
+            if(inicial.x<final.x){
+                mov[i]= Este;
+                inicial.x++;
+            }
+            else{ 
+                if(inicial.y>final.y){
+                mov[i]= Sul;
+                inicial.y--;
+                }
+                else{
+                    if (inicial.y<final.y){
+                        mov[i]= Norte;
+                        inicial.y++;
+                    }
+                    else break;
+                    
+                }
+            }
+        }
+        
+    }
+
+    if(inicial.x!=final.x || inicial.y!=final.y){
+        return -1;
+    }
+
+    return i;
+}
+
+int maisCentral (Posicao pos[], int N){
+    int i, menor, dist, min_i = 0;
+    menor = abs((pos[i].x*pos[i].x)+(pos[i].y*pos[i].y));
+
+    for(i=1; i<N; i++){
+        dist = abs((pos[i].x*pos[i].x)+(pos[i].y*pos[i].y));
+        if(dist<menor){
+            menor = dist;
+            min_i = i;
+        }
+        dist = 0;
+    }
+
+    return min_i;
+}
+
+int vizinhos (Posicao p, Posicao pos[], int N){
+    int i, r = 0;
+    for(i=0; i<N; i++){
+        if (p.x==pos[i].x && (p.y-1)==pos[i].y){
+           r++;
+        }
+        else{
+            if(p.x==pos[i].x && (p.y+1)==pos[i].y){
+                r++;
+            }
+            else{ 
+                if(p.y==pos[i].y && (p.x-1)==pos[i].x){
+                    r++;
+                }
+                else{
+                    if (p.y==pos[i].y && (p.x+1)==pos[i].x){
+                        r++;
+                    }   
+                }
+            }
+        }
+        
+    }
+
+    return r;
+}
 
 
 int main() {
