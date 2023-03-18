@@ -47,10 +47,23 @@ int maximum (int v[], int N, int *m){
     }
 }
 
+void quadrados (int q[], int N){
+    for(int i = 0; i<N; i++){
+        q[i] = pow(i,2);
+    }
+}
 
+void quadrados2 (int q[], int N){
+    int quadrado = 0;
+    for(int i=0; i<N; i++){
+        quadrado += 2*quadrado +1;
+        q[i] = quadrado;
+    }
+}
 
+/*
 int main() {
-        int arr[] = {1, 4, 2, 7, 5};
+    int arr[] = {1, 4, 2, 7, 5};
     int N = 5;
     int max;
     if (maximum(arr, N, &max) == 0) {
@@ -59,5 +72,24 @@ int main() {
     else {
         printf("Error: the array is empty\n");
     }
+    return 0;
+}
+*/
+
+int main(){
+    int q[10];
+    int k[10];
+    quadrados(q, 10);
+    quadrados2(k,10);
+     printf("array q: ");
+    for (int i = 0; i < 10; i++){
+        printf("%d ", q[i]);
+    }
+    printf("\n");
+     printf("array k: ");
+    for (int i = 0; i < 10; i++){
+        printf("%d ", k[i]);
+    }
+    printf("\n");
     return 0;
 }
