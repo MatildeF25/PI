@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+
 void swapM (int *x, int *y){
     int aux = *y;
     *y = *x;
@@ -47,17 +48,11 @@ int maximum (int v[], int N, int *m){
     }
 }
 
-void quadrados (int q[], int N){
-    for(int i = 0; i<N; i++){
-        q[i] = pow(i,2);
-    }
-}
 
-void quadrados2 (int q[], int N){
+void quadrados (int q[], int N){
     int quadrado = 0;
-    for(int i=0; i<N; i++){
-        quadrado += 2*quadrado +1;
-        q[i] = quadrado;
+    for(int i=-1; i<N-1; i++){
+        q[i+1] = i*i + (2*i+1);
     }
 }
 
@@ -80,15 +75,9 @@ int main(){
     int q[10];
     int k[10];
     quadrados(q, 10);
-    quadrados2(k,10);
-     printf("array q: ");
+    printf("array q: ");
     for (int i = 0; i < 10; i++){
         printf("%d ", q[i]);
-    }
-    printf("\n");
-     printf("array k: ");
-    for (int i = 0; i < 10; i++){
-        printf("%d ", k[i]);
     }
     printf("\n");
     return 0;
