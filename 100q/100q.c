@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
 typedef struct lligada {
     int valor;
     struct lligada *prox;
@@ -13,170 +17,180 @@ LInt newLInt (int v, LInt t){
     return new;
 }
 
-
 int length (LInt l){
-    int i;
-    while (l)
-    {
-        i++;
+    int res = 0;
+    if(l == NULL){
+        return res;
+    }
+    while(l!=NULL){
+        res++;
         l = l->prox;
     }
-    return i;
+    return res;
+
 }
 
 void freeL (LInt l){
-    LInt aux;
-    while(l->prox){
-        aux = l;
-        l= l->prox;
-        free(aux);
+    
+    while (l!=NULL){
+        LInt temp = l;
+        l = l->prox;
+        free(temp);
     }
 }
 
 void imprimeL (LInt l){
-    while (l){
-        printf("%d, ", l->valor);
+    while(l!=NULL){
+        printf("%d - ", l->valor);
         l = l->prox;
     }
-
 }
 
-LInt reverseL (LInt l){
-    if(!l){
-        return NULL;
-    }
-    LInt ant=NULL, next;
 
-    while(l){
+LInt reverseL (LInt l){
+    LInt ant = NULL;
+    LInt next;
+
+    while(l!=NULL){
         next = l->prox;
         l->prox = ant;
         ant = l;
         l = next;
     }
 
-    return ant;
+    return l;
 }
 
-void insertOrd (LInt *l, int x){
-    LInt new = newLInt(x,NULL);
+void insertOrd (LInt *l, int n){
+    LInt new = newLInt(n, NULL);
     LInt ant = NULL;
    
-    while ((*l) && (*l)->valor <= x){
+    while(*l != NULL && (*l)->valor <= n){
         ant = *l;
         l = &(*l)->prox;
     }
 
-    if(ant){
+    if(ant != NULL){     // adicionar no meio ou fim da lista
         new->prox = *l;
         ant->prox = new;
-    }
-    else{
-        new->prox = (*l);
+    } 
+    else{               // adicionar no inicio da lista ou numa lista vazia
+        new->prox = *l;
         *l = new;
     }
-    
 }
 
-int removeOneOrd (LInt *l, int x){
-    LInt ant = NULL, atual = *l;
 
+int removeOneOrd (LInt *l, int n){
+    LInt atual = *l, ant = NULL;
 
-    while(atual && atual->valor!=x){
+    while (atual != NULL && atual->valor < x){
         ant = atual;
         atual = atual->prox;
     }
 
-    if(atual==NULL){
+    if(atual != NULL && atual->valor == x){
+        if(ant == NULL){ // remove o primeiro elemento
+            *l = atual->prox;
+        }
+        else{ // remove elementodo meio ou do fim
+            ant->prox = atual->prox;
+        }
+        free(atual);
         return 1;
     }
 
-    if(ant){
-        ant->prox = atual->prox;
-        free(atual);
-        return 0;
-    }
-    else{
-        *l = atual->prox;
-        return 0;
-    }
+    return 0;
 }
 
+void merge (LInt *r, LInt a, LInt b){
+    LInt atual = newLInt(0,NULL);
+    *r = atual;
 
-int merge (LInt *r, LInt a, LInt b){
-    LInt atual;
-
-    if(a==NULL){
-        *r=b;
-        return;
-    }
-
-    if(b==NULL){
-        *r=a;
-        return;
-    }
-
-    if(a->valor<b->valor){
-        *r=a;
-        a = a->prox;
-    }
-    else{
-        *r=b;
-        b=b->prox;
-    }
-
-    atual = *r;
-
-    while (a && b){
-        if(a->valor<b->valor){
-            atual->prox=a;
-            a=a->prox;
+    while(a!=NULL && b!=NULL){
+        if(a->valor > b->valor){
+            atual->prox = b->valor;
+            b = b->prox;
         }
         else{
-            atual->prox=b;
-            b=b->prox;
+            atual->prox = a->valor;
+            a = a->prox;
         }
         atual = atual->prox;
     }
 
-    if(a){
-        atual->prox = a;
-    }
-    else{
+    if(a==NULL){
         atual->prox = b;
     }
-    
-}
-
-void splitQS (LInt l, int x, LInt *mx, LInt *Mx){
-    LInt atualm = NULL, atualM = NULL;
-
-    while(l){
-        if(l->valor<x){
-            if(*mx == NULL){
-                *mx = l;
-                atualm = *mx;
-            }
-            else{
-                atualm->prox = l;
-                atualm = atualm->prox;
-            }
-        }
-        else{
-            if(*Mx == NULL){
-                *Mx = l;
-                atualM = *Mx;
-            }
-            else{
-                atualM->prox = l;
-                atualM = atualM->prox;
-            }
-        }
-
-        l=l->prox;
+    else{
+        atual->prox = a;
     }
 
-    if (atualm != NULL) atualm->prox = NULL;
-    if (atualM != NULL) atualM->prox = NULL;
+    atual = *r;
+    *r = (*r)->prox;
+    free(atual);
 }
 
+
+void splitQS (LInt l, int x, LInt *mx, LInt *Mx){
+    *mx = newLInt(0,NULL);
+    *Mx = newLInt(0,NULL);
+
+    LInt atual_mx = *mx;
+    LInt atual_Mx = *Mx;
+
+    while(l){
+        if(l->valor < x){
+            atual_mx->prox = l;
+            l = l->prox;
+            atual_mx = atual_mx->prox;
+            atual_mx->prox = NULL; 
+        }
+        else{
+            atual_Mx->prox = l;
+            l = l->prox;
+            atual_Mx = atual_Mx->prox;
+            atual_Mx->prox = NULL;
+        }
+    }
+
+    atual_mx = *mx;
+    *mx = (*mx)->prox;
+    free(atual_mx);
+
+    atual_Mx = *Mx;
+    *Mx = (*Mx)->prox;
+    free(atual_Mx);
+}
+
+LInt parteAmeio (LInt *l){
+    int len = length(*l);
+    LInt y = NULL;
+
+    while (){
+
+        
+    }
+    
+
+
+}
+
+
+
+
+
+
+
+int main (){
+    // create a linked list 1->2->3->NULL
+    LInt l = newLInt(1, newLInt(2, newLInt(3, NULL)));
+
+    // print the length of the linked list
+    printf("Length of the linked list: %d\n", length(l));
+    imprimeL(l);
+
+    freeL(l);
+    return 0;
+}
 
