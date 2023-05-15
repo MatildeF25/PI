@@ -519,9 +519,6 @@ LInt rotateL (LInt l){
 }
 
 
-
-
-
 LInt parte (LInt l){
     if(l==NULL){
         return NULL;
@@ -560,26 +557,72 @@ typedef struct nodo {
     struct nodo *esq, *dir;
 } *ABin;
 
+ABin newAbin (int r, ABin e, ABin d){
+   ABin new = (ABin) malloc (sizeof (struct nodo));
 
+    if(new != NULL){
+        new->valor = r;
+        new->dir = d;
+        new->esq = e;
+    }
+    return new;
+}
 
+int altura (ABin a){
+    int alt = 0;
+    if(a == NULL){
+        return 0;
+    }
+    int lh = altura(a->esq);
+    int rh = altura(a->dir);
 
+    if(lh > rh){
+        return alt = lh +1;
+    }
+    else{
+        return alt = rh + 1;
+    }    
+}
 
+ABin cloneAB (ABin a){    
+    if(a==NULL){
+        return NULL;
+    }
+    return newAbin(a->valor, cloneAB(a->esq), cloneAB(a->dir));
+}
 
+void mirror (ABin *a){
+    if((*a)==NULL){
+        return;
+    }
+    ABin aux = (*a)->dir;
+    (*a)->dir = (*a)->esq;
+    (*a)->esq = aux;
+    mirror(&(*a)->dir);
+    mirror(&(*a)->esq);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void inorder(ABin a, LInt* l) {
+    if (a == NULL) {
+        return;
+    }
+    
+    inorder(a->esq, l);  // Traverse the left subtree recursively
+    
+    // Create a new node for the current element and append it to the linked list
+    LInt new_node = newLInt2(a->valor, NULL);
+    if (*l == NULL) {
+        *l = new_node;  // If the linked list is empty, set the new node as the head
+    } else {
+        LInt current = *l;
+        while (current->prox != NULL) {
+            current = current->prox;  // Traverse to the last node
+        }
+        current->prox = new_node;  // Append the new node to the last node
+    }
+    
+    inorder(a->dir, l);  // Traverse the right subtree recursively
+}
 
 
 
