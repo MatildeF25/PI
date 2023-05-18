@@ -59,7 +59,7 @@ LInt reverseL (LInt l){
         l = next;
     }
 
-    return l;
+    return ant;
 }
 
 void insertOrd (LInt *l, int n){
@@ -98,10 +98,10 @@ int removeOneOrd (LInt *l, int n){
             ant->prox = atual->prox;
         }
         free(atual);
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 void merge (LInt *r, LInt a, LInt b){
@@ -133,7 +133,49 @@ void merge (LInt *r, LInt a, LInt b){
 }
 
 
-void splitQS (LInt l, int x, LInt *mx, LInt *Mx){
+void splitQS_1 (LInt l, int x, LInt *mx, LInt *Mx){
+    LInt ant1 = NULL;
+    LInt ant2 = NULL;
+
+    while (l!=NULL){
+        if(l->valor < x){
+            if(ant1 == NULL){
+                *mx = l;
+            }
+            else{
+                ant1->prox = l;
+            }
+            ant1 = l;
+        }
+        else{
+            if(ant2 == NULL){
+                *Mx = l;
+            }
+            else{
+                ant2->prox = l;
+            }
+            ant2 = l;
+        }
+        l = l->prox;
+    }
+    
+    if(ant1==NULL){
+        *mx = NULL;
+    }
+    else{
+        ant1->prox = NULL;
+    }
+    
+    if(ant2==NULL){
+        *Mx = NULL;
+    }
+    else{
+        ant2->prox = NULL;
+    }
+}
+
+// não sei se se pode fazer assim
+void splitQS_2 (LInt l, int x, LInt *mx, LInt *Mx){
     *mx = newLInt(0,NULL);
     *Mx = newLInt(0,NULL);
 
@@ -753,8 +795,8 @@ LInt nivelL(ABin a, int n) {
         return newLInt(a->valor, NULL);
     }
 
-    LInt left = nivelL(a->esq, n - 1);
-    LInt right = nivelL(a->dir, n - 1);
+    LInt l1 = nivelL(a->esq, n - 1);
+    LInt l2 = nivelL(a->dir, n - 1);
 
     if(l2 == NULL){
         return l1;
@@ -777,8 +819,8 @@ int nivelV (ABin a, int n, int v[]){
         return 1;
     }
 
-    int l = nivelL(a->esq, n-1, v);
-    int r = nivelL(a->dir, n-1, v+l);
+    int l = nivelL(a->esq, (n-1), v);
+    int r = nivelL(a->dir, (n-1), (v+l));
 
     return l+r;
 }
@@ -829,7 +871,7 @@ int contaFolhas (ABin a){
     int r = contaFolhas(a->dir);
 
     if(l==0 && r==0){
-        return 1
+        return 1;
     }
 
     return l+r;
@@ -840,7 +882,7 @@ ABin cloneMirror (ABin a){
         return NULL;
     }
 
-    ABin new = malloc(sizeof(structnodo));
+    ABin new = malloc(sizeof(struct nodo));
     new->valor = a->valor;
     new->esq = cloneMirror(a->dir);
     new->dir = cloneMirror(a->esq);
@@ -926,8 +968,30 @@ void removeMaiorA (ABin *a){
 
 int quantosMaiores (ABin a, int x){
     if(a == NULL){
-        return
+        return;
     }
+}
+
+
+
+int maxValor (ABin a){
+    while (a->dir != NULL) a = a->dir;
+    return a->valor;
+}
+
+int minValor (ABin a){
+    while (a->esq != NULL) a = a->esq;
+    return a->valor;
+}
+ 
+int deProcura (ABin a){
+    if (a == NULL) return 1;
+    if (a->esq != NULL && a->esq->valor >= a->valor) return 0;
+    if (a->dir != NULL && a->dir->valor <= a->valor) return 0;
+    if (!deProcura(a->esq) || !deProcura(a->dir)) return 0;
+    if (a->esq != NULL && maxValor(a->esq) >= a->valor) return 0;
+    if (a->dir != NULL && minValor(a->dir) <= a->valor) return 0;
+    return 1;
 }
 
 
